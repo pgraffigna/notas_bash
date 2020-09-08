@@ -368,3 +368,5 @@ mysqldump -u USER --password=PASS --single-transaction --all-databases
 mysqldump -u USER --password=PASS --no-data TABLES
 
 sqlmap -u URL --method POST --data "username=FUZZ&password=" -P username --dbs --dbms mysql --level 2
+
+[Back to top](#Al-Principio)
