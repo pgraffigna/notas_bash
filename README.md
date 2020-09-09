@@ -1,5 +1,5 @@
 # Notas bash/powershell
-## Ayuda memoria 
+#### Ayuda memoria 
 
 ![GitHub Logo](https://cloud.githubusercontent.com/assets/5456665/13322882/e74f6626-dc00-11e5-921d-f6d024a01eaa.png "GitHub")
 
