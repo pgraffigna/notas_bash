@@ -379,4 +379,5 @@ mysqldump -u USER --password=PASS --no-data TABLES
 
 sqlmap -u URL --method POST --data "username=FUZZ&password=" -P username --dbs --dbms mysql --level 2
 
-- [Inicio](#ayuda memoria)
+---
+- [Inicio](#Ayuda-memoria)
