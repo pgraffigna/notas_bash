@@ -159,6 +159,8 @@ curl -U "USUARIO" --referer URL-SRC URL-DST
 
 openssl PASSWORD
 
+grep -oP '\[.*?\]' quita los corchetes
+
 ---
 #### Oneliners
 for i in admin dev test backup; do gobuster -u "url"/$i -w "wordlist" -t -o outputFile$i.txt; done
@@ -248,6 +250,8 @@ hashcat --user -m 1000 hash lst -r rules/InsidePro-PasswordsPro.rule -r rules/ba
 hashcat --examples-hashes | grep 'mode'
 
 hashcat --force --stdout dictionario.lst -r /usr/share/hashcat/rules/best64.rule
+
+hashcat -m MODE -a 0 HASH LST --force -o FILE *a=fuerza bruta, o=archivo destino
 
 zip2john 8702.zip
 
