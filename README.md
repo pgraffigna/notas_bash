@@ -92,6 +92,12 @@ find . -type d | while read DIRECTORY; do echo ${DIRECTORY} | grep php; done
 
 tr '\n' ',' < tplinkList.txt
 
+shuf -n 1 FILE --> *muestra palabras del archivo en forma aleatoria*
+
+paste -sd "," FILE --> *agrega una coma entre palabras*
+
+head /dev/urandom | tr -dc A-Za-z0-9 | head -c 10 ; echo ' ' --> *generador de passwords*
+
 sed -i '/192\.168\.0\.1/d' /var/log/messages.log --> *elimina todas las lineas que contienen la ip*
 
 mkfifo input; tail -f input | /bin/sh 2>/dev/null > output
@@ -126,7 +132,13 @@ echo !* --> *todos los argumentos*
 
 curl -# --upload-file -F file=@FILE URL
 
-grep -oP '\[.*?\]' quita los corchetes
+grep -oP '\[.*?\]' --> *quita los corchetes*
+
+xclip -i FILE -selection clipboard
+
+dd if=FILE bs=1 skip=8 of=FILE.out --> *saca los primeros 8 bytes y deja el resto*
+
+dd if=FILE bs=1 count=8 of=FILE.out --> *solo deja los primeros 8 bytes*
 
 ---
 #### Oneliners
@@ -308,8 +320,6 @@ mkfifo input; tail -f input | /bin/bash > output
 #### Tmux
 tmux new -s "nombre"
 
-tmux kill-window -t "n"
-
 prefix + space --> *mueve los paneles*
 
 prefix + q --> *muestra los IDs de los paneles*
@@ -318,17 +328,21 @@ prefix + x --> *cierra los paneles*
 
 prefix + ! --> *mueve el panel activo a una nueva ventana*
 
-prefix + [ --> *para buscar texto*
-
 ---
-#### Tmux copy mode
+#### Tmux copy mode 
 prefix + [
 
-prefix + space
+ctrl + space
 
-prefix + w
+ctrl + w
 
 prefix + ]
+
+---
+#### Tmux search mode
+prefix + [
+
+ctrl + s *n=para busqueda, shift+n=busqueda reversa* 
 
 ---
 #### Mysql
